@@ -50,8 +50,8 @@ suite('AI Prompt Manager Extension Test Suite', () => {
 		existsSyncStub.returns(true); // Assume directory and file exist by default
 		existsSyncStub.withArgs(promptsFilePath).callsFake(() => mockPrompts.length > 0 || readFileSyncStub.called); // Only "exists" if written or explicitly set
 		readFileSyncStub.withArgs(promptsFilePath, 'utf8').callsFake(() => JSON.stringify(mockPrompts));
-		writeFileSyncStub.withArgs(promptsFilePath, sinon.match.string).callsFake((path, data) => {
-			mockPrompts = JSON.parse(data as string);
+		writeFileSyncStub.withArgs(promptsFilePath, sinon.match.string).callsFake((path: string, data: string) => {
+			mockPrompts = JSON.parse(data);
 		});
 		mkdirSyncStub.returns(undefined);
 
