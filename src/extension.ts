@@ -27,7 +27,7 @@ export const UNCACHED_CATEGORY_NAME = 'Uncategorized';
 
 
 // --- Data Access Helper Functions ---
-function readData(filePath: string): PromptsData {
+export function readData(filePath: string): PromptsData { // Added export
 	const defaultData: PromptsData = {
 		categories: [{ id: UNCACHED_CATEGORY_ID, name: UNCACHED_CATEGORY_NAME }],
 		prompts: []
@@ -69,7 +69,7 @@ function readData(filePath: string): PromptsData {
 	}
 }
 
-function writeData(filePath: string, data: PromptsData): void {
+export function writeData(filePath: string, data: PromptsData): void { // Added export
 	try {
 		fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 	} catch (error) {
@@ -78,8 +78,9 @@ function writeData(filePath: string, data: PromptsData): void {
 	}
 }
 
-// Export necessary items for PromptManagerViewProvider
-export { PromptsData, Category, Prompt, readData, writeData, UNCACHED_CATEGORY_ID, UNCACHED_CATEGORY_NAME };
+// Individual exports for types, consts, and functions are now used.
+// The aggregate export line below was causing redeclaration errors and is removed.
+// export { PromptsData, Category, Prompt, readData, writeData, UNCACHED_CATEGORY_ID, UNCACHED_CATEGORY_NAME };
 import { PromptManagerViewProvider } from './PromptManagerViewProvider';
 
 
