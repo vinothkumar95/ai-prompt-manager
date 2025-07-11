@@ -114,65 +114,80 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
     }
 
     private editCategory(categoryId: string, newName: string) {
-        if (!newName || !newName.trim()) {
-            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category name cannot be empty.' });
-            return;
-        }
-        if (categoryId === UNCACHED_CATEGORY_ID) {
-            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: '"Uncategorized" category cannot be renamed.' });
-            return;
-        }
-        const data = readData(this._promptsFile);
-        const category = data.categories.find(c => c.id === categoryId);
-        if (category) {
+        try {
+            if (!newName || !newName.trim()) {
+                this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category name cannot be empty.' });
+                this.sendCategories(); // Refresh UI with current state
+                return;
+            }
+            if (categoryId === UNCACHED_CATEGORY_ID) {
+                this._view?.webview.postMessage({ command: 'showErrorInWebview', message: '"Uncategorized" category cannot be renamed.' });
+                this.sendCategories(); // Refresh UI with current state
+                return;
+            }
+
+            const data = readData(this._promptsFile);
+            const category = data.categories.find(c => c.id === categoryId);
+
+            if (!category) {
+                this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category not found for editing.' });
+                this.sendCategories(); // Refresh UI with current state
+                return;
+            }
+
             // Check if another category (excluding current one) already has the new name
             if (data.categories.some(c => c.id !== categoryId && c.name.toLowerCase() === newName.trim().toLowerCase())) {
                 this._view?.webview.postMessage({ command: 'showErrorInWebview', message: `Another category with name "${newName.trim()}" already exists.` });
+                this.sendCategories(); // Refresh UI with current state
                 return;
             }
+
             category.name = newName.trim();
-            writeData(this._promptsFile, data); // Shows error on failure & throws
-            this.sendCategories(); // Refresh with new data if write succeeded
-        } else {
-            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category not found for editing.' });
-            // No data change, but good to ensure UI consistency if needed, though often not necessary here
-            // this.sendCategories();
-        }
-    } catch (error) {
-        this._view?.webview.postMessage({ command: 'showErrorInWebview', message: `Failed to edit category: ${error.message}` });
-        this.sendCategories(); // Refresh with current data state
-    }
-}
-
-private deleteCategory(categoryId: string) {
-    try {
-        if (categoryId === UNCACHED_CATEGORY_ID) {
-            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: '"Uncategorized" category cannot be deleted.' });
-            // this.sendCategories(); // Data unchanged
-            return;
-        }
-        const data = readData(this._promptsFile);
-        const initialCategoryCount = data.categories.length;
-
-        data.prompts.forEach(prompt => {
-            if (prompt.categoryId === categoryId) {
-                prompt.categoryId = UNCACHED_CATEGORY_ID;
-            }
-        });
-        data.categories = data.categories.filter(c => c.id !== categoryId);
-
-        if (data.categories.length < initialCategoryCount) { // If a category was actually found and removed
-            writeData(this._promptsFile, data); // Shows error on failure & throws
+            writeData(this._promptsFile, data);
             this.sendCategories();
-        } else {
-             this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category not found for deletion.' });
-            // this.sendCategories(); // Data unchanged if not found
+        } catch (error) {
+            const err = error as Error;
+            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: `Failed to edit category: ${err.message}` });
+            this.sendCategories();
         }
-    } catch (error) {
-        this._view?.webview.postMessage({ command: 'showErrorInWebview', message: `Failed to delete category: ${error.message}` });
-        this.sendCategories(); // Refresh with current data state
     }
-}
+
+    private deleteCategory(categoryId: string) {
+        try {
+            if (categoryId === UNCACHED_CATEGORY_ID) {
+                this._view?.webview.postMessage({ command: 'showErrorInWebview', message: '"Uncategorized" category cannot be deleted.' });
+                this.sendCategories();
+                return;
+            }
+
+            const data = readData(this._promptsFile);
+            const initialCategoryCount = data.categories.length;
+            const categoryExists = data.categories.some(c => c.id === categoryId);
+
+            if (!categoryExists) {
+                this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category not found for deletion.' });
+                this.sendCategories();
+                return;
+            }
+
+            data.prompts.forEach(prompt => {
+                if (prompt.categoryId === categoryId) {
+                    prompt.categoryId = UNCACHED_CATEGORY_ID;
+                }
+            });
+            data.categories = data.categories.filter(c => c.id !== categoryId);
+
+            // Only write and refresh if a category was actually removed.
+            // This condition is implicitly covered if categoryExists was true.
+            writeData(this._promptsFile, data);
+            this.sendCategories();
+
+        } catch (error) {
+            const err = error as Error;
+            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: `Failed to delete category: ${err.message}` });
+            this.sendCategories();
+        }
+    }
 
     private addPrompt(categoryId: string, text: string) {
         if (!text || !text.trim()) {
