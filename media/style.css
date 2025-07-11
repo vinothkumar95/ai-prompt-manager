@@ -37,6 +37,17 @@ input[type="text"] {
     margin-bottom: 10px;
 }
 
+textarea { /* General textarea styling */
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    padding: 5px;
+    border-radius: 3px;
+    width: 100%; /* Default to full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-bottom: 5px;
+}
+
 /* Containers */
 #categories-view, #prompts-view {
     margin-top: 10px;
@@ -53,6 +64,43 @@ input[type="text"] {
     margin: 0;
     font-size: 1.2em;
 }
+
+.view-header input[type="text"]#new-category-name {
+    flex-grow: 1;
+    margin-right: 5px;
+    /* Optionally, make it a bit taller if desired */
+    /* padding-top: 7px; */
+    /* padding-bottom: 7px; */
+}
+
+.view-header button#add-category-btn {
+    /* If we want it to be more icon-focused */
+    min-width: auto; /* Allow button to shrink to icon size + padding */
+    padding: 5px 8px; /* Adjust padding as needed */
+}
+.view-header button#add-category-btn span { /* Target the icon span */
+    margin-right: 0; /* Remove right margin if button text "Add" is removed */
+}
+
+/* Add Prompt Form specific styles */
+.add-prompt-form {
+    margin-bottom: 15px; /* Space below the form */
+}
+
+.add-prompt-form textarea#new-prompt-text {
+    width: 100%;
+    min-height: 60px; /* Ensure a decent default height */
+    margin-bottom: 5px;
+}
+
+.add-prompt-form button#add-prompt-btn {
+    display: block; /* Make button take its own line */
+    margin-left: auto; /* Align to the right */
+    /* Or, for full width button: */
+    /* width: 100%; */
+    /* text-align: center; */
+}
+
 
 /* Category Cards */
 #categories-container {
@@ -135,6 +183,9 @@ input[type="text"] {
     word-break: break-word;
     cursor: text; /* Indicate it's editable on double click */
     min-height: 20px; /* Ensure it's clickable even if empty */
+    max-height: 100px; /* Allow up to ~5 lines of text before scrolling */
+    overflow-y: auto;  /* Add scrollbar if content exceeds max-height */
+    padding-right: 5px; /* Add some padding if scrollbar appears */
 }
 
 .prompt-actions {
@@ -166,3 +217,29 @@ input[type="text"] {
 .icon-copy::before { content: "📋"; }
 .icon-back::before { content: "⬅️"; }
 .icon-add::before { content: "➕"; }
+
+/* Styles for inline prompt editing */
+.prompt-box .prompt-edit-save-btn {
+    display: block; /* Or inline-block if preferred */
+    margin-top: 5px;
+    margin-left: auto; /* Align right if block */
+    /* background-color: var(--vscode-button-primaryBackground); Optional: make it stand out */
+    /* color: var(--vscode-button-primaryForeground); */
+}
+
+.prompt-box .temp-message {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: var(--vscode-editor-selectionBackground);
+    color: var(--vscode-editor-selectionForeground);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    animation: fadeInOut 1.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    20%, 80% { opacity: 1; }
+}

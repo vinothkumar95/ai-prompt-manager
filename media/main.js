@@ -141,38 +141,84 @@
     }
 
     function makePromptEditable(textEl, promptId, currentText) {
+        // If already editing this element, don't add more buttons etc.
+        if (textEl.getAttribute('contenteditable') === 'true') return;
+
         textEl.setAttribute('contenteditable', 'true');
         textEl.focus();
+        // Select all text in contentEditable element
+        const range = document.createRange();
+        range.selectNodeContents(textEl);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+
         const originalText = currentText;
+        const promptBox = textEl.closest('.prompt-box');
+
+        // Remove existing save button if any (e.g. from a previous edit attempt that was interrupted)
+        const existingSaveBtn = promptBox?.querySelector('.prompt-edit-save-btn');
+        existingSaveBtn?.remove();
+
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = 'Save';
+        saveBtn.className = 'prompt-edit-save-btn'; // For styling
+
+        const cleanup = () => {
+            textEl.removeAttribute('contenteditable');
+            saveBtn.remove();
+            textEl.removeEventListener('blur', onBlur);
+            textEl.removeEventListener('keydown', onKeydown);
+            // Restore focus to the prompt text element or prompt box for accessibility
+            textEl.focus();
+        };
 
         const saveChanges = () => {
-            textEl.removeAttribute('contenteditable');
             const newText = textEl.textContent.trim();
             if (newText && newText !== originalText) {
                 vscode.postMessage({ command: 'editPrompt', promptId: promptId, newText: newText, categoryId: currentCategoryId });
+                // Optimistically show saved message - backend will refresh the list
+                showTemporaryMessage(promptBox, "Saved!");
             } else {
                 textEl.textContent = originalText; // Revert if empty or unchanged
             }
-            // Remove event listeners to prevent multiple bindings
-            textEl.removeEventListener('blur', onBlur);
-            textEl.removeEventListener('keydown', onKeydown);
+            cleanup();
         };
 
-        const onBlur = () => saveChanges();
+        saveBtn.addEventListener('click', saveChanges);
+        promptBox?.appendChild(saveBtn); // Append save button to the prompt box
+
+        const onBlur = (e) => {
+            // IMPORTANT: Allow click on save button without triggering blur-to-save first
+            // Check if the relatedTarget (where focus is going) is the save button
+            if (e.relatedTarget !== saveBtn) {
+                saveChanges();
+            }
+        };
         const onKeydown = (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { // Save on Enter (but allow Shift+Enter for newlines)
+            if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 saveChanges();
-            } else if (e.key === 'Escape') { // Cancel on Escape
-                textEl.textContent = originalText;
-                textEl.removeAttribute('contenteditable');
-                textEl.removeEventListener('blur', onBlur);
-                textEl.removeEventListener('keydown', onKeydown);
+            } else if (e.key === 'Escape') {
+                textEl.textContent = originalText; // Revert
+                cleanup();
             }
         };
 
         textEl.addEventListener('blur', onBlur);
         textEl.addEventListener('keydown', onKeydown);
+    }
+
+    function showTemporaryMessage(containerElement, messageText) {
+        if (!containerElement) return;
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = messageText;
+        messageDiv.className = 'temp-message'; // Style this
+
+        containerElement.appendChild(messageDiv);
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 1500); // Remove after 1.5 seconds
     }
 
 
