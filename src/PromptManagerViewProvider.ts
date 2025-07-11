@@ -221,10 +221,28 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
     }
 
     private deletePrompt(promptId: string, categoryId: string) {
-        const data = readData(this._promptsFile);
-        data.prompts = data.prompts.filter(p => p.id !== promptId);
-        writeData(this._promptsFile, data);
-        this.sendPromptsForCategory(categoryId); // Refresh view for current category
+        try {
+            const data = readData(this._promptsFile);
+            const initialPromptCount = data.prompts.length;
+            data.prompts = data.prompts.filter(p => p.id !== promptId);
+
+            if (data.prompts.length < initialPromptCount) { // Check if a prompt was actually deleted
+                writeData(this._promptsFile, data);
+                this.sendPromptsForCategory(categoryId);
+            } else {
+                // Prompt not found, maybe already deleted? Or bad ID.
+                // Optionally send an error or just refresh. For now, refresh.
+                this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt not found for deletion.' });
+                this.sendPromptsForCategory(categoryId);
+            }
+        } catch (error) {
+            const err = error as Error;
+            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: `Failed to delete prompt: ${err.message}` });
+            // Still try to send current state of prompts for that category
+            if (categoryId) {
+                this.sendPromptsForCategory(categoryId);
+            }
+        }
     }
 
     private movePrompt(promptId: string, newCategoryId: string, oldCategoryId: string) {
@@ -275,9 +293,11 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                     <!-- Categories View -->
                     <div id="categories-view">
                         <div class="view-header">
+                            {/* <h2>Categories</h2> Replaced by button and input context */}
                             <input type="text" id="new-category-name" placeholder="New category name...">
-                            <button id="add-category-btn" title="Add New Category"><span class="icon-add"></span></button>
+                            <button id="add-category-btn" title="Add New Category"><span class="icon-add"></span> Add</button>
                         </div>
+                        {/* <input type="text" id="new-category-name" placeholder="New category name..."> was moved up, this comment is now redundant here */}
                         <div id="categories-container">
                             <!-- Categories will be rendered here by main.js -->
                             <p>Loading categories...</p>
@@ -289,6 +309,7 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                         <div class="view-header">
                             <button id="back-to-categories-btn" title="Back to Categories"><span class="icon-back"></span> Back</button>
                             <h2 id="category-name-header">Category Prompts</h2>
+                            {/* Add Prompt button moved below, associated with textarea */}
                         </div>
                         <div class="add-prompt-form">
                              <textarea id="new-prompt-text" placeholder="New prompt text (use {code} for selection)..." rows="4"></textarea>
