@@ -275,11 +275,9 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                     <!-- Categories View -->
                     <div id="categories-view">
                         <div class="view-header">
-                            {/* <h2>Categories</h2> Replaced by button and input context */}
                             <input type="text" id="new-category-name" placeholder="New category name...">
-                            <button id="add-category-btn" title="Add New Category"><span class="icon-add"></span> Add</button>
+                            <button id="add-category-btn" title="Add New Category"><span class="icon-add"></span></button>
                         </div>
-                        {/* <input type="text" id="new-category-name" placeholder="New category name..."> was moved up, this comment is now redundant here */}
                         <div id="categories-container">
                             <!-- Categories will be rendered here by main.js -->
                             <p>Loading categories...</p>
@@ -291,7 +289,6 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                         <div class="view-header">
                             <button id="back-to-categories-btn" title="Back to Categories"><span class="icon-back"></span> Back</button>
                             <h2 id="category-name-header">Category Prompts</h2>
-                            {/* Add Prompt button moved below, associated with textarea */}
                         </div>
                         <div class="add-prompt-form">
                              <textarea id="new-prompt-text" placeholder="New prompt text (use {code} for selection)..." rows="4"></textarea>
