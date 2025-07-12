@@ -4,85 +4,47 @@
   "description": "save and insert saved prompt to AI chatbot",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.102.0"
+    "vscode": "^1.85.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:aiPromptManager.webview"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "aiPromptTemplatesContainer",
-          "title": "Prompt Templates",
-          "icon": "resources/prompt-templates.svg"
+          "id": "aiPromptManagerViewContainer",
+          "title": "AI Prompts",
+          "icon": "resources/prompt-templates.png"
         }
       ]
     },
     "views": {
-      "aiPromptTemplatesContainer": [
+      "aiPromptManagerViewContainer": [
         {
-          "id": "aiPromptTemplatesView",
-          "name": "AI Prompt Templates"
-        }
-      ],
-      "explorer": [
-        {
-          "id": "aiPromptTemplatesView",
-          "name": "AI Prompt Templates"
+          "id": "aiPromptManager.webview",
+          "name": "Prompt Manager",
+          "type": "webview"
         }
       ]
     },
     "commands": [
       {
-        "command": "aiPromptTemplates.refresh",
-        "title": "Refresh Prompt Templates"
+        "command": "aiPromptManager.refreshWebview",
+        "title": "Refresh AI Prompts Webview",
+        "category": "AIPromptManager"
       },
       {
-        "command": "aiPromptTemplates.insertPrompt",
-        "title": "Insert Selected Prompt"
-      },
-      {
-        "command": "aiPromptTemplates.addPrompt",
-        "title": "Add New Prompt"
-      },
-      {
-        "command": "aiPromptTemplates.editPrompt",
-        "title": "Edit Selected Prompt"
-      },
-      {
-        "command": "aiPromptTemplates.deletePrompt",
-        "title": "Delete Selected Prompt"
+        "command": "aiPromptManager.insertTextWithCode",
+        "title": "Insert AI Prompt with Selected Code",
+        "category": "AIPromptManager"
       }
     ],
-    "menus": {
-      "view/item/context": [
-        {
-          "command": "aiPromptTemplates.editPrompt",
-          "when": "view == aiPromptTemplatesView && viewItem == promptItem",
-          "group": "inline"
-        },
-        {
-          "command": "aiPromptTemplates.deletePrompt",
-          "when": "view == aiPromptTemplatesView && viewItem == promptItem",
-          "group": "inline"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "aiPromptTemplates.addPrompt",
-          "when": "view == aiPromptTemplatesView",
-          "group": "navigation"
-        },
-        {
-          "command": "aiPromptTemplates.refresh",
-          "when": "view == aiPromptTemplatesView",
-          "group": "navigation"
-        }
-      ]
-    }
+    "menus": {}
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -93,14 +55,20 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.102.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/sinon": "^17.0.4",
+    "@types/uuid": "^10.0.0",
+    "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "typescript": "^5.8.3",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "sinon": "^21.0.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
   }
 }

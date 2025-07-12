@@ -1,0 +1,266 @@
+body {
+    font-family: var(--vscode-font-family);
+    color: var(--vscode-editor-foreground);
+    background-color: var(--vscode-editor-background);
+    padding: 10px;
+    margin: 0;
+    overflow-y: auto;
+}
+
+h1 {
+    font-size: var(--vscode-font-size); /* Use editor font size for consistency */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: 1px solid var(--vscode-button-border, var(--vscode-button-background));
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin: 5px 0;
+}
+
+button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+input[type="text"] {
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    padding: 5px;
+    border-radius: 3px;
+    width: calc(100% - 12px); /* Adjust for padding and border */
+    margin-bottom: 10px;
+}
+
+textarea { /* General textarea styling */
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    padding: 5px;
+    border-radius: 3px;
+    width: 100%; /* Default to full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-bottom: 5px;
+}
+
+/* Containers */
+#categories-view, #prompts-view {
+    margin-top: 10px;
+}
+
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.view-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.view-header input[type="text"]#new-category-name,
+.view-header button#add-category-btn {
+    height: 32px;           /* Make both the same height, adjust as needed */
+    margin: 0;              /* Remove default margin */
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.view-header button#add-category-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* If we want it to be more icon-focused */
+    min-width: auto; /* Allow button to shrink to icon size + padding */
+    padding: 5px 8px; /* Adjust padding as needed */
+}
+.view-header button#add-category-btn span { /* Target the icon span */
+    margin-right: 0; /* Remove right margin if button text "Add" is removed */
+}
+
+.category-card .category-name-edit-input {
+    width: calc(100% - 10px); /* Adjust to fit within card padding */
+    padding: 3px 5px;
+    margin: 0; /* Remove default input margins if any */
+    box-sizing: border-box;
+    border: 1px solid var(--vscode-inputOption-activeBorder, var(--vscode-focusBorder));
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: inherit; /* Inherit font size from card */
+    font-weight: bold; /* Match .category-name style */
+    text-align: center; /* Match .category-name style */
+}
+
+
+/* Add Prompt Form specific styles */
+.add-prompt-form {
+    margin-bottom: 15px; /* Space below the form */
+}
+
+.add-prompt-form textarea#new-prompt-text {
+    width: 100%;
+    min-height: 60px; /* Ensure a decent default height */
+    margin-bottom: 5px;
+}
+
+.add-prompt-form button#add-prompt-btn {
+    display: block; /* Make button take its own line */
+    margin-left: auto; /* Align to the right */
+    /* Or, for full width button: */
+    /* width: 100%; */
+    /* text-align: center; */
+}
+
+
+/* Category Cards */
+#categories-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.category-card {
+    background-color: var(--vscode-sideBar-background, var(--vscode-editorWidget-background));
+    border: 1px solid var(--vscode-sideBar-border, var(--vscode-editorWidget-border));
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    position: relative; /* For icon positioning */
+}
+
+.category-card:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.category-card .category-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.category-card .prompt-count {
+    font-size: 0.8em;
+    color: var(--vscode-descriptionForeground);
+}
+
+.category-actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none; /* Hidden by default, show on hover or focus */
+}
+
+.category-card:hover .category-actions,
+.category-card:focus-within .category-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.category-actions button {
+    padding: 2px 4px;
+    font-size: 0.8em;
+    background: none;
+    border: none;
+}
+.category-actions button:hover {
+    color: var(--vscode-button-hoverBackground); /* Or a specific icon hover color */
+}
+
+
+/* Prompt Boxes */
+#prompts-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.prompt-box {
+    background-color: var(--vscode-sideBar-background, var(--vscode-editorWidget-background));
+    border: 1px solid var(--vscode-sideBar-border, var(--vscode-editorWidget-border));
+    padding: 10px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.prompt-box:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.prompt-text {
+    white-space: pre-wrap; /* Preserve whitespace and newlines */
+    word-break: break-word;
+    cursor: text; /* Indicate it's editable on double click */
+    min-height: 20px; /* Ensure it's clickable even if empty */
+    max-height: 100px; /* Allow up to ~5 lines of text before scrolling */
+    overflow-y: auto;  /* Add scrollbar if content exceeds max-height */
+    padding-right: 5px; /* Add some padding if scrollbar appears */
+}
+
+.prompt-actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 5px;
+}
+
+.prompt-actions button {
+    padding: 2px 4px;
+    font-size: 0.8em;
+    background: none;
+    border: none;
+}
+.prompt-actions button:hover {
+     color: var(--vscode-button-hoverBackground);
+}
+
+/* Utility */
+.hidden {
+    display: none !important;
+}
+
+/* Icons (using text for now, can be replaced with SVGs/iconfont) */
+.icon-edit::before { content: "✏️"; }
+.icon-delete::before { content: "🗑️"; }
+.icon-copy::before { content: "📋"; }
+.icon-back::before { content: "⬅️"; }
+.icon-add::before { content: "➕"; }
+
+/* Styles for inline prompt editing */
+.prompt-box .prompt-edit-save-btn {
+    display: block; /* Or inline-block if preferred */
+    margin-top: 5px;
+    margin-left: auto; /* Align right if block */
+    /* background-color: var(--vscode-button-primaryBackground); Optional: make it stand out */
+    /* color: var(--vscode-button-primaryForeground); */
+}
+
+.prompt-box .temp-message {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: var(--vscode-editor-selectionBackground);
+    color: var(--vscode-editor-selectionForeground);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    animation: fadeInOut 1.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    20%, 80% { opacity: 1; }
+}

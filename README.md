@@ -37,6 +37,14 @@ None yet.
 
 ## Release Notes
 
+### 0.0.3
+- **Enhanced Data Management**: Prompts now use unique IDs, making editing and deletion more robust.
+- **Improved Error Handling**: Better error reporting for file operations (reading/writing prompt data).
+- **Input Validation**: Added validation to ensure category and prompt text are not empty when adding or editing prompts.
+- **Bug Fix**: Corrected `engines.vscode` version in `package.json` to ensure proper extension loading and compatibility.
+- **Code Quality**: Refactored codebase for better readability and maintainability (e.g., centralized file I/O).
+- **Testing**: Added a comprehensive test suite for core functionalities.
+
 ### 0.0.2
 - Add/edit/delete prompt templates
 - Group prompts by category
