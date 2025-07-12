@@ -2,7 +2,7 @@
   "name": "mandram-ai-prompt-manager",
   "displayName": "Mandram - AI Prompt Manager",
   "description": "Save, organize, and insert AI prompts with code template support",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "publisher": "vinothkumarchellapandi",
   "engines": {
     "vscode": "^1.85.0"
@@ -82,7 +82,7 @@
     "@types/node": "20.x",
     "@types/sinon": "^17.0.4",
     "@types/uuid": "^10.0.0",
-    "@types/vscode": "^1.102.0",
+    "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
     "@vscode/test-cli": "^0.0.11",
