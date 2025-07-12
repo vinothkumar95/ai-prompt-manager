@@ -1,17 +1,37 @@
 {
   "name": "ai-prompt-manager",
-  "displayName": "AI prompt manager",
-  "description": "save and insert saved prompt to AI chatbot",
-  "version": "0.0.1",
+  "displayName": "AI Prompt Manager",
+  "description": "Save, organize, and insert AI prompts with code template support",
+  "version": "1.0.0",
+  "publisher": "your-publisher-name",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Productivity"
   ],
   "activationEvents": [
     "onView:aiPromptManager.webview"
   ],
+  "keywords": [
+    "ai",
+    "prompt",
+    "templates",
+    "chatgpt",
+    "productivity",
+    "code",
+    "snippets"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/ai-prompt-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/ai-prompt-manager/issues"
+  },
+  "homepage": "https://github.com/your-username/ai-prompt-manager#readme",
+  "license": "MIT",
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -52,7 +72,9 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

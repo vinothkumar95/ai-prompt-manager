@@ -238,7 +238,7 @@
 
     // --- Event Handlers & Message Posting ---
     addCategoryButton?.addEventListener('click', () => {
-        const name = newCategoryInput?.value.trim();
+        const name = newCategoryInput?.value?.trim();
         if (name) {
             vscode.postMessage({ command: 'addCategory', name: name });
             if (newCategoryInput) newCategoryInput.value = '';
@@ -306,7 +306,7 @@
     });
 
     addPromptButton?.addEventListener('click', () => {
-        const text = newPromptTextarea?.value.trim();
+        const text = newPromptTextarea?.value?.trim();
         if (text && currentCategoryId) {
             vscode.postMessage({ command: 'addPrompt', categoryId: currentCategoryId, text: text });
             if (newPromptTextarea) newPromptTextarea.value = '';
