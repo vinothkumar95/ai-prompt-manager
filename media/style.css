@@ -65,21 +65,37 @@ textarea { /* General textarea styling */
     font-size: 1.2em;
 }
 
-.view-header input[type="text"]#new-category-name,
+.view-header input[type="text"]#new-category-name {
+    flex-grow: 1;
+    margin-right: 5px;
+    /* Optionally, make it a bit taller if desired */
+    /* padding-top: 7px; */
+    /* padding-bottom: 7px; */
+}
+
 .view-header button#add-category-btn {
-    height: 32px;           /* Make both the same height, adjust as needed */
-    margin: 0;              /* Remove default margin */
-    padding-top: 0;
-    padding-bottom: 0;
+    /* If we want it to be more icon-focused */
+    min-width: auto; /* Allow button to shrink to icon size + padding */
+    padding: 5px 8px; /* Adjust padding as needed */
+}
+.view-header button#add-category-btn span { /* Target the icon span */
+    margin-right: 0; /* Remove right margin if button text "Add" is removed */
+}
+
+.category-card .category-name-edit-input {
+    width: calc(100% - 10px); /* Adjust to fit within card padding */
+    padding: 3px 5px;
+    margin: 0; /* Remove default input margins if any */
     box-sizing: border-box;
-    display: flex;
-    align-items: center;
+    border: 1px solid var(--vscode-inputOption-activeBorder, var(--vscode-focusBorder));
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: inherit; /* Inherit font size from card */
+    font-weight: bold; /* Match .category-name style */
+    text-align: center; /* Match .category-name style */
 }
-.view-header button#add-category-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
 
 /* Add Prompt Form specific styles */
 .add-prompt-form {

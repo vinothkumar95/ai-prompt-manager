@@ -56,10 +56,11 @@
                 const editBtn = document.createElement('button');
                 editBtn.innerHTML = '<span class="icon-edit" title="Edit category"></span>';
                 editBtn.dataset.categoryId = cat.id;
-                editBtn.dataset.categoryName = cat.name;
+                editBtn.dataset.categoryName = cat.name; // Keep for context if needed, but new fn uses live value
                 editBtn.addEventListener('click', (e) => {
                     e.stopPropagation(); // Prevent card click
-                    handleEditCategory(cat.id, cat.name);
+                    // Pass the name display element, category ID, and current name
+                    makeCategoryNameEditable(nameEl, cat.id, nameEl.textContent || cat.name);
                 });
                 actions.appendChild(editBtn);
 
@@ -253,17 +254,51 @@
         }
     });
 
-    function handleEditCategory(categoryId, currentName) {
-        const newName = prompt(`Edit category name:`, currentName); // Using browser prompt for simplicity for now
-        if (newName && newName.trim() !== currentName) {
-            vscode.postMessage({ command: 'editCategory', categoryId: categoryId, newName: newName.trim() });
-        }
+    function makeCategoryNameEditable(nameDisplayElement, categoryId, currentName) {
+        // Prevent multiple inline edits
+        if (nameDisplayElement.querySelector('input')) return;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentName;
+        input.className = 'category-name-edit-input'; // For styling
+
+        const originalParent = nameDisplayElement.parentNode;
+
+        const saveCategoryName = () => {
+            const newName = input.value.trim();
+            nameDisplayElement.textContent = newName || currentName; // Revert to old if new is empty
+            originalParent?.replaceChild(nameDisplayElement, input); // Put original div back
+
+            if (newName && newName !== currentName) {
+                vscode.postMessage({ command: 'editCategory', categoryId: categoryId, newName: newName });
+            }
+        };
+
+        const cancelEdit = () => {
+            nameDisplayElement.textContent = currentName;
+            originalParent?.replaceChild(nameDisplayElement, input);
+        };
+
+        input.addEventListener('blur', saveCategoryName);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveCategoryName();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelEdit();
+            }
+        });
+
+        originalParent?.replaceChild(input, nameDisplayElement); // Replace div with input
+        input.focus();
+        input.select();
     }
 
     function handleDeleteCategory(categoryId, categoryName) {
-        if (confirm(`Are you sure you want to delete category "${categoryName}"? Prompts will be moved to Uncategorized.`)) {
-            vscode.postMessage({ command: 'deleteCategory', categoryId: categoryId });
-        }
+        // Removed confirm() dialog as per new requirements
+        vscode.postMessage({ command: 'deleteCategory', categoryId: categoryId });
     }
 
     backToCategoriesButton?.addEventListener('click', () => {
@@ -281,10 +316,8 @@
     });
 
     function handleDeletePrompt(promptId, promptText) {
-        const shortText = promptText.length > 50 ? promptText.substring(0, 47) + '...' : promptText;
-        if (confirm(`Are you sure you want to delete prompt "${shortText}"?`)) {
-            vscode.postMessage({ command: 'deletePrompt', promptId: promptId, categoryId: currentCategoryId });
-        }
+        // Removed confirm() dialog as per new requirements
+        vscode.postMessage({ command: 'deletePrompt', promptId: promptId, categoryId: currentCategoryId });
     }
 
     // --- Message Listener from Extension ---
