@@ -59,7 +59,9 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                     this.movePrompt(message.promptId, message.newCategoryId, message.oldCategoryId);
                     return;
                 case 'copyPromptText':
-                    vscode.env.clipboard.writeText(message.text).then(() => {
+                    // Ensure the text maintains its exact format when copied
+                    const textToCopy = message.text;
+                    vscode.env.clipboard.writeText(textToCopy).then(() => {
                         vscode.window.showInformationMessage('Prompt text copied to clipboard.');
                         // Optionally send a 'promptCopied' message back to webview for UI feedback
                         // this._view?.webview.postMessage({ command: 'promptCopied' });
@@ -76,7 +78,9 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
     }
 
     public sendCategories() {
-        if (!this._view) return;
+        if (!this._view) {
+            return;
+        }
         const data = readData(this._promptsFile);
         const categoriesWithCounts = data.categories.map(category => {
             const count = data.prompts.filter(prompt => prompt.categoryId === category.id).length;
@@ -86,7 +90,9 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
     }
 
     public sendPromptsForCategory(categoryId: string) {
-        if (!this._view) return;
+        if (!this._view) {
+            return;
+        }
         const data = readData(this._promptsFile);
         const category = data.categories.find(c => c.id === categoryId);
         const promptsForCategory = data.prompts.filter(p => p.categoryId === categoryId);

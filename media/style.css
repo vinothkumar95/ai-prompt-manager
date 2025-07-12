@@ -238,6 +238,7 @@ textarea { /* General textarea styling */
 .icon-copy::before { content: "📋"; }
 .icon-back::before { content: "⬅️"; }
 .icon-add::before { content: "➕"; }
+.icon-insert::before { content: "📥"; }
 
 /* Styles for inline prompt editing */
 .prompt-box .prompt-edit-save-btn {
@@ -263,4 +264,67 @@ textarea { /* General textarea styling */
 @keyframes fadeInOut {
     0%, 100% { opacity: 0; }
     20%, 80% { opacity: 1; }
+}
+
+/* Modal Styles */
+#modal-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--vscode-editor-background);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--vscode-sideBar-border);
+    background-color: var(--vscode-sideBar-background);
+}
+
+.modal-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--vscode-editor-foreground);
+}
+
+.modal-header button {
+    background: none;
+    border: none;
+    color: var(--vscode-editor-foreground);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.modal-header button:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon-close::before { content: "✕"; }
+
+/* Modal content area */
+#modal-container #categories-view,
+#modal-container #prompts-view {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+/* Ensure modal has proper spacing */
+#modal-container .view-header {
+    margin-bottom: 15px;
+}
+
+/* Make modal content more accessible */
+#modal-container .category-card,
+#modal-container .prompt-box {
+    transition: all 0.2s ease;
+}
+
+#modal-container .category-card:focus,
+#modal-container .prompt-box:focus {
+    outline: 2px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
 }

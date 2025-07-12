@@ -15,7 +15,8 @@
   "activationEvents": [
     "onView:aiPromptManager.webview",
     "onCommand:aiPromptManager.refreshWebview",
-    "onCommand:aiPromptManager.insertTextWithCode"
+    "onCommand:aiPromptManager.insertTextWithCode",
+    "onCommand:aiPromptManager.openModal"
   ],
   "keywords": [
     "ai",
@@ -65,6 +66,17 @@
         "command": "aiPromptManager.insertTextWithCode",
         "title": "Insert AI Prompt with Selected Code",
         "category": "AI Prompt Manager"
+      },
+      {
+        "command": "aiPromptManager.openModal",
+        "title": "Open AI Prompt Manager Modal",
+        "category": "AI Prompt Manager"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "aiPromptManager.openModal",
+        "key": "ctrl+alt+m"
       }
     ]
   },

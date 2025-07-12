@@ -82,6 +82,7 @@ export function writeData(filePath: string, data: PromptsData): void { // Added 
 // The aggregate export line below was causing redeclaration errors and is removed.
 // export { PromptsData, Category, Prompt, readData, writeData, UNCACHED_CATEGORY_ID, UNCACHED_CATEGORY_NAME };
 import { PromptManagerViewProvider } from './PromptManagerViewProvider';
+import { PromptManagerModalProvider } from './PromptManagerModalProvider';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -128,6 +129,10 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.registerWebviewViewProvider(PromptManagerViewProvider.viewType, provider)
 	);
 
+	// Register the Modal Provider
+	const modalProvider = new PromptManagerModalProvider(context.extensionUri, context.globalStorageUri.fsPath);
+	modalProvider.registerStatusBarItem(context);
+
 	// TODO: Re-evaluate commands. Some might be triggered from webview, others might be global.
 	// For now, old commands are removed as they were tied to the TreeView.
 	// A command to insert selected text via a webview interaction might be useful.
@@ -159,6 +164,13 @@ export function activate(context: vscode.ExtensionContext) {
 			} else {
 				vscode.window.showErrorMessage('Invalid arguments for inserting text.');
 			}
+		})
+	);
+
+	// Command to open the modal
+	context.subscriptions.push(
+		vscode.commands.registerCommand('aiPromptManager.openModal', () => {
+			modalProvider.createOrShowModal();
 		})
 	);
 
