@@ -294,7 +294,7 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                     <div id="categories-view">
                         <div class="view-header">
                             <input type="text" id="new-category-name" placeholder="New category name...">
-                            <button id="add-category-btn" title="Add New Category"><span class="icon-add"></span> Add</button>
+                            <button id="add-category-btn" title="Add New Category"><span class="icon-add"></span></button>
                         </div>
                         <div id="categories-container">
                             <!-- Categories will be rendered here by main.js -->
