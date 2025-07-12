@@ -2,7 +2,7 @@
 
 A powerful VS Code extension for managing and organizing AI prompts with intelligent code template support. Save, categorize, and quickly insert your favorite AI prompts with automatic code replacement.
 
-![AI Prompt Manager](https://raw.githubusercontent.com/your-username/ai-prompt-manager/main/resources/prompt-templates.png)
+![AI Prompt Manager](https://raw.githubusercontent.com/vinothkumar95/ai-prompt-manager/main/resources/prompt-templates.png)
 
 ## Features
 
@@ -154,9 +154,9 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/ai-prompt-manager/issues)
-- **Documentation**: [GitHub Wiki](https://github.com/your-username/ai-prompt-manager/wiki)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/ai-prompt-manager/discussions)
+- **Issues**: [GitHub Issues](https://github.com/vinothkumar95/ai-prompt-manager/issues)
+- **Documentation**: [GitHub Wiki](https://github.com/vinothkumar95/ai-prompt-manager/wiki)
+- **Discussions**: [GitHub Discussions](https://github.com/vinothkumar95/ai-prompt-manager/discussions)
 
 ## License
 

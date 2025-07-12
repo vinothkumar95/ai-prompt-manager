@@ -1,18 +1,20 @@
 {
-  "name": "ai-prompt-manager",
-  "displayName": "AI Prompt Manager",
+  "name": "mandram-ai-prompt-manager",
+  "displayName": "Mandram - AI Prompt Manager",
   "description": "Save, organize, and insert AI prompts with code template support",
   "version": "1.0.0",
-  "publisher": "your-publisher-name",
+  "publisher": "vinothkumarchellapandi",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
     "Other",
-    "Productivity"
+    "AI"
   ],
   "activationEvents": [
-    "onView:aiPromptManager.webview"
+    "onView:aiPromptManager.webview",
+    "onCommand:aiPromptManager.refreshWebview",
+    "onCommand:aiPromptManager.insertTextWithCode"
   ],
   "keywords": [
     "ai",
@@ -25,12 +27,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/ai-prompt-manager.git"
+    "url": "https://github.com/vinothkumar95/ai-prompt-manager"
   },
   "bugs": {
-    "url": "https://github.com/your-username/ai-prompt-manager/issues"
+    "url": "https://github.com/vinothkumar95/ai-prompt-manager/issues"
   },
-  "homepage": "https://github.com/your-username/ai-prompt-manager#readme",
+  "homepage": "https://github.com/vinothkumar95/ai-prompt-manager#readme",
   "license": "MIT",
   "main": "./out/extension.js",
   "contributes": {
@@ -56,15 +58,14 @@
       {
         "command": "aiPromptManager.refreshWebview",
         "title": "Refresh AI Prompts Webview",
-        "category": "AIPromptManager"
+        "category": "AI Prompt Manager"
       },
       {
         "command": "aiPromptManager.insertTextWithCode",
         "title": "Insert AI Prompt with Selected Code",
-        "category": "AIPromptManager"
+        "category": "AI Prompt Manager"
       }
-    ],
-    "menus": {}
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

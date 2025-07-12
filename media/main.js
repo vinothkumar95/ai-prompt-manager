@@ -20,11 +20,11 @@
     const promptsListContainer = document.getElementById('prompts-list-container');
 
     const addCategoryButton = document.getElementById('add-category-btn');
-    const newCategoryInput = document.getElementById('new-category-name');
+    const newCategoryInput = /** @type {HTMLInputElement} */ (document.getElementById('new-category-name'));
 
     const backToCategoriesButton = document.getElementById('back-to-categories-btn');
     const addPromptButton = document.getElementById('add-prompt-btn');
-    const newPromptTextarea = document.getElementById('new-prompt-text');
+    const newPromptTextarea = /** @type {HTMLTextAreaElement} */ (document.getElementById('new-prompt-text'));
 
 
     // --- Render Functions ---
