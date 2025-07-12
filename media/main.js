@@ -339,7 +339,8 @@
                 console.log('Prompt text copied to clipboard.');
                 break;
             case 'showErrorInWebview': // For backend to send error messages
-                alert(`Error: ${message.message}`); // Simple alert for now
+                // alert(`Error: ${message.message}`); // Simple alert for now
+                vscode.postMessage({ command: 'showError', message: `${message.message}` });
                 break;
         }
     });

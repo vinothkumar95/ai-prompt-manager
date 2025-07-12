@@ -19,7 +19,7 @@
         {
           "id": "aiPromptManagerViewContainer",
           "title": "AI Prompts",
-          "icon": "resources/prompt-templates.svg"
+          "icon": "resources/prompt-templates.png"
         }
       ]
     },
