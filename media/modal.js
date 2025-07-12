@@ -76,30 +76,42 @@
                 box.className = 'prompt-box';
                 box.dataset.promptId = prompt.id;
 
+                // Show the title
+                const titleEl = document.createElement('div');
+                titleEl.className = 'prompt-title';
+                titleEl.textContent = prompt.title;
+                box.appendChild(titleEl);
+
+                // Show the text
                 const textEl = document.createElement('div');
                 textEl.className = 'prompt-text';
                 textEl.textContent = prompt.text;
-                textEl.setAttribute('tabindex', '0');
                 box.appendChild(textEl);
 
+                // Copy icon button
                 const actions = document.createElement('div');
                 actions.className = 'prompt-actions';
-
-                const insertBtn = document.createElement('button');
-                insertBtn.innerHTML = '<span class="icon-insert" title="Insert prompt"></span>';
-                insertBtn.title = 'Insert prompt';
-                insertBtn.addEventListener('click', (e) => {
+                const copyBtn = document.createElement('button');
+                copyBtn.innerHTML = '<span class="icon-copy" title="Copy prompt"></span>';
+                copyBtn.title = 'Copy prompt';
+                copyBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    vscode.postMessage({ command: 'insertPromptText', text: prompt.text });
+                    vscode.postMessage({ command: 'copyPromptText', text: prompt.text });
                 });
-                actions.appendChild(insertBtn);
-
+                actions.appendChild(copyBtn);
                 box.appendChild(actions);
 
-                // Add keyboard navigation for insert
-                textEl.addEventListener('keypress', (e) => {
+                // Copy on click (title, text, or box)
+                box.addEventListener('click', (e) => {
+                    if (e.target === box || e.target === titleEl || e.target === textEl) {
+                        vscode.postMessage({ command: 'copyPromptText', text: prompt.text });
+                    }
+                });
+                // Keyboard accessibility
+                box.setAttribute('tabindex', '0');
+                box.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
-                        vscode.postMessage({ command: 'insertPromptText', text: prompt.text });
+                        vscode.postMessage({ command: 'copyPromptText', text: prompt.text });
                     }
                 });
 

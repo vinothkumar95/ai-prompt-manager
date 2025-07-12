@@ -29,3 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated extension logo
+
+## [2.0.0] - 2024-07-12
+### Changed
+- Prompts now have both a title and text field; both are editable in the main view.
+- Modal view and main view are now separated: modal is copy-only, main view allows full management (edit/delete).
+- Accessibility improvements: keyboard navigation, status bar button, and improved UI.
+- Modern, visually appealing scrollbars for all views.
+- Removed the Mandram Prompt tree view and its activity bar icon.

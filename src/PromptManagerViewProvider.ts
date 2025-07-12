@@ -47,10 +47,10 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                     this.deleteCategory(message.categoryId);
                     return;
                 case 'addPrompt':
-                    this.addPrompt(message.categoryId, message.text);
+                    this.addPrompt(message.categoryId, message.data);
                     return;
                 case 'editPrompt':
-                    this.editPrompt(message.promptId, message.newText, message.categoryId);
+                    this.editPrompt(message.promptId, message.data, message.categoryId);
                     return;
                 case 'deletePrompt':
                     this.deletePrompt(message.promptId, message.categoryId);
@@ -195,34 +195,45 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
         }
     }
 
-    private addPrompt(categoryId: string, text: string) {
+    private addPrompt(categoryId: string, data: { title: string, text: string }) {
+        const { title, text } = data;
+        if (!title || !title.trim()) {
+            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt title cannot be empty.' });
+            return;
+        }
         if (!text || !text.trim()) {
             this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt text cannot be empty.' });
             return;
         }
-        const data = readData(this._promptsFile);
-        if (!data.categories.find(c => c.id === categoryId)) {
+        const promptsData = readData(this._promptsFile);
+        if (!promptsData.categories.find(c => c.id === categoryId)) {
             this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Category not found for adding prompt.' });
             return;
         }
-        data.prompts.push({ id: uuidv4(), categoryId: categoryId, text: text.trim() });
-        writeData(this._promptsFile, data);
+        promptsData.prompts.push({ id: uuidv4(), categoryId: categoryId, title: title.trim(), text: text.trim() });
+        writeData(this._promptsFile, promptsData);
         this.sendPromptsForCategory(categoryId); // Refresh prompts for the current category
     }
 
-    private editPrompt(promptId: string, newText: string, categoryId: string) {
-         if (!newText || !newText.trim()) {
+    private editPrompt(promptId: string, data: { title: string, text: string }, categoryId: string) {
+        const { title, text } = data;
+        if (!title || !title.trim()) {
+            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt title cannot be empty.' });
+            return;
+        }
+        if (!text || !text.trim()) {
             this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt text cannot be empty.' });
             return;
         }
-        const data = readData(this._promptsFile);
-        const prompt = data.prompts.find(p => p.id === promptId);
+        const promptsData = readData(this._promptsFile);
+        const prompt = promptsData.prompts.find(p => p.id === promptId);
         if (prompt) {
-            prompt.text = newText.trim();
-            writeData(this._promptsFile, data);
+            prompt.title = title.trim();
+            prompt.text = text.trim();
+            writeData(this._promptsFile, promptsData);
             this.sendPromptsForCategory(categoryId); // Refresh view for current category
         } else {
-             this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt not found for editing.' });
+            this._view?.webview.postMessage({ command: 'showErrorInWebview', message: 'Prompt not found for editing.' });
         }
     }
 
@@ -315,6 +326,7 @@ export class PromptManagerViewProvider implements vscode.WebviewViewProvider {
                             <h2 id="category-name-header">Category Prompts</h2>
                         </div>
                         <div class="add-prompt-form">
+                             <input type="text" id="new-prompt-title" placeholder="Prompt title..." />
                              <textarea id="new-prompt-text" placeholder="New prompt text (use {code} for selection)..." rows="4"></textarea>
                              <button id="add-prompt-btn" title="Add New Prompt to this Category"><span class="icon-add"></span> Add Prompt</button>
                         </div>

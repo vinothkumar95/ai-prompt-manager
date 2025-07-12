@@ -12,8 +12,9 @@ export interface Category {
 export interface Prompt {
 	id: string;
 	categoryId: string;
+	title: string;
 	text: string; // Renamed from 'prompt' for clarity
-	// Future: add fields like 'title', 'description', 'lastUsed', 'createdAt'
+	// Future: add fields like 'description', 'lastUsed', 'createdAt'
 }
 
 export interface PromptsData {
@@ -84,7 +85,6 @@ export function writeData(filePath: string, data: PromptsData): void { // Added 
 import { PromptManagerViewProvider } from './PromptManagerViewProvider';
 import { PromptManagerModalProvider } from './PromptManagerModalProvider';
 
-
 export function activate(context: vscode.ExtensionContext) {
 	const promptsFile = path.join(context.globalStorageUri.fsPath, 'prompts.json');
 
@@ -105,8 +105,8 @@ export function activate(context: vscode.ExtensionContext) {
 					{ id: devCategoryId, name: "Development" }
 				],
 				prompts: [
-					{ id: uuidv4(), categoryId: debugCategoryId, text: "Explain what this code does:\n{code}" },
-					{ id: uuidv4(), categoryId: devCategoryId, text: "Generate unit tests for:\n{code}" }
+					{ id: uuidv4(), categoryId: debugCategoryId, title: "Explain Code", text: "Explain what this code does:\n{code}" },
+					{ id: uuidv4(), categoryId: devCategoryId, title: "Generate Unit Tests", text: "Generate unit tests for:\n{code}" }
 				]
 			};
 			writeData(promptsFile, initialData);

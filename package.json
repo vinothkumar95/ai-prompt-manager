@@ -2,7 +2,7 @@
   "name": "mandram-ai-prompt-manager",
   "displayName": "Mandram - AI Prompt Manager",
   "description": "Save, organize, and insert AI prompts with code template support",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "publisher": "vinothkumarchellapandi",
   "engines": {
     "vscode": "^1.85.0"

@@ -24,7 +24,8 @@
 
     const backToCategoriesButton = document.getElementById('back-to-categories-btn');
     const addPromptButton = document.getElementById('add-prompt-btn');
-    const newPromptTextarea = /** @type {HTMLTextAreaElement} */ (document.getElementById('new-prompt-text'));
+    const newPromptTitleInput = document.getElementById('new-prompt-title');
+    const newPromptTextarea = document.getElementById('new-prompt-text');
 
 
     // --- Render Functions ---
@@ -104,23 +105,32 @@
                 box.className = 'prompt-box';
                 box.dataset.promptId = prompt.id;
 
+                // Title
+                const titleEl = document.createElement('div');
+                titleEl.className = 'prompt-title';
+                titleEl.textContent = prompt.title;
+                box.appendChild(titleEl);
+
+                // Text
                 const textEl = document.createElement('div');
                 textEl.className = 'prompt-text';
                 textEl.textContent = prompt.text;
-                textEl.setAttribute('tabindex', '0');
                 box.appendChild(textEl);
 
+                // Actions
                 const actions = document.createElement('div');
                 actions.className = 'prompt-actions';
 
-                const copyBtn = document.createElement('button');
-                copyBtn.innerHTML = '<span class="icon-copy" title="Copy prompt"></span>';
-                copyBtn.addEventListener('click', (e) => {
+                // Edit button
+                const editBtn = document.createElement('button');
+                editBtn.innerHTML = '<span class="icon-edit" title="Edit prompt"></span>';
+                editBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    vscode.postMessage({ command: 'copyPromptText', text: prompt.text });
+                    makePromptEditable(box, prompt.id, prompt.title, prompt.text);
                 });
-                actions.appendChild(copyBtn);
+                actions.appendChild(editBtn);
 
+                // Delete button
                 const deleteBtn = document.createElement('button');
                 deleteBtn.innerHTML = '<span class="icon-delete" title="Delete prompt"></span>';
                 deleteBtn.addEventListener('click', (e) => {
@@ -128,11 +138,22 @@
                     handleDeletePrompt(prompt.id, prompt.text);
                 });
                 actions.appendChild(deleteBtn);
+
                 box.appendChild(actions);
 
-                // Double click to edit
-                textEl.addEventListener('dblclick', () => {
-                    makePromptEditable(textEl, prompt.id, prompt.text);
+                // Copy on click (optional: keep for quick copy)
+                box.addEventListener('click', (e) => {
+                    // Only copy if not clicking on an action button
+                    if (e.target === box || e.target === titleEl || e.target === textEl) {
+                        vscode.postMessage({ command: 'copyPromptText', text: prompt.text });
+                    }
+                });
+                // Keyboard accessibility
+                box.setAttribute('tabindex', '0');
+                box.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        vscode.postMessage({ command: 'copyPromptText', text: prompt.text });
+                    }
                 });
 
                 promptsListContainer.appendChild(box);
@@ -141,73 +162,48 @@
         switchToPromptsView();
     }
 
-    function makePromptEditable(textEl, promptId, currentText) {
-        // If already editing this element, don't add more buttons etc.
-        if (textEl.getAttribute('contenteditable') === 'true') return;
-
-        textEl.setAttribute('contenteditable', 'true');
-        textEl.focus();
-        // Select all text in contentEditable element
-        const range = document.createRange();
-        range.selectNodeContents(textEl);
-        const selection = window.getSelection();
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-
-        const originalText = currentText;
-        const promptBox = textEl.closest('.prompt-box');
-
-        // Remove existing save button if any (e.g. from a previous edit attempt that was interrupted)
-        const existingSaveBtn = promptBox?.querySelector('.prompt-edit-save-btn');
-        existingSaveBtn?.remove();
-
+    function makePromptEditable(box, promptId, currentTitle, currentText) {
+        // Remove existing edit UI if any
+        box.innerHTML = '';
+        // Title input
+        const titleInput = document.createElement('input');
+        titleInput.type = 'text';
+        titleInput.value = currentTitle;
+        titleInput.className = 'prompt-title-edit-input';
+        box.appendChild(titleInput);
+        // Textarea
+        const textArea = document.createElement('textarea');
+        textArea.value = currentText;
+        textArea.className = 'prompt-text-edit-input';
+        box.appendChild(textArea);
+        // Button row
+        const btnRow = document.createElement('div');
+        btnRow.className = 'prompt-edit-btn-row';
+        // Save button
         const saveBtn = document.createElement('button');
         saveBtn.textContent = 'Save';
-        saveBtn.className = 'prompt-edit-save-btn'; // For styling
-
-        const cleanup = () => {
-            textEl.removeAttribute('contenteditable');
-            saveBtn.remove();
-            textEl.removeEventListener('blur', onBlur);
-            textEl.removeEventListener('keydown', onKeydown);
-            // Restore focus to the prompt text element or prompt box for accessibility
-            textEl.focus();
-        };
-
-        const saveChanges = () => {
-            const newText = textEl.textContent.trim();
-            if (newText && newText !== originalText) {
-                vscode.postMessage({ command: 'editPrompt', promptId: promptId, newText: newText, categoryId: currentCategoryId });
-                // Optimistically show saved message - backend will refresh the list
-                showTemporaryMessage(promptBox, "Saved!");
+        saveBtn.className = 'prompt-edit-save-btn';
+        saveBtn.addEventListener('click', () => {
+            const newTitle = titleInput.value.trim();
+            const newText = textArea.value.trim();
+            if (newTitle && newText) {
+                vscode.postMessage({ command: 'editPrompt', promptId: promptId, data: { title: newTitle, text: newText }, categoryId: currentCategoryId });
             } else {
-                textEl.textContent = originalText; // Revert if empty or unchanged
+                showTemporaryMessage(box, 'Title and text cannot be empty.');
             }
-            cleanup();
-        };
-
-        saveBtn.addEventListener('click', saveChanges);
-        promptBox?.appendChild(saveBtn); // Append save button to the prompt box
-
-        const onBlur = (e) => {
-            // IMPORTANT: Allow click on save button without triggering blur-to-save first
-            // Check if the relatedTarget (where focus is going) is the save button
-            if (e.relatedTarget !== saveBtn) {
-                saveChanges();
-            }
-        };
-        const onKeydown = (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                saveChanges();
-            } else if (e.key === 'Escape') {
-                textEl.textContent = originalText; // Revert
-                cleanup();
-            }
-        };
-
-        textEl.addEventListener('blur', onBlur);
-        textEl.addEventListener('keydown', onKeydown);
+        });
+        btnRow.appendChild(saveBtn);
+        // Cancel button
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.className = 'prompt-edit-cancel-btn';
+        cancelBtn.addEventListener('click', () => {
+            renderPrompts();
+        });
+        btnRow.appendChild(cancelBtn);
+        box.appendChild(btnRow);
+        // Focus title input
+        titleInput.focus();
     }
 
     function showTemporaryMessage(containerElement, messageText) {
@@ -305,13 +301,18 @@
         vscode.postMessage({ command: 'getCategories' }); // This will trigger re-render of categories view
     });
 
+    // Add prompt form logic
     addPromptButton?.addEventListener('click', () => {
-        const text = newPromptTextarea?.value?.trim();
-        if (text && currentCategoryId) {
-            vscode.postMessage({ command: 'addPrompt', categoryId: currentCategoryId, text: text });
-            if (newPromptTextarea) newPromptTextarea.value = '';
+        const title = newPromptTitleInput ? (newPromptTitleInput instanceof HTMLInputElement ? newPromptTitleInput.value.trim() : '') : '';
+        const text = newPromptTextarea ? (newPromptTextarea instanceof HTMLTextAreaElement ? newPromptTextarea.value.trim() : '') : '';
+        if (title && text && currentCategoryId) {
+            vscode.postMessage({ command: 'addPrompt', categoryId: currentCategoryId, data: { title, text } });
+            if (newPromptTitleInput && newPromptTitleInput instanceof HTMLInputElement) newPromptTitleInput.value = '';
+            if (newPromptTextarea && newPromptTextarea instanceof HTMLTextAreaElement) newPromptTextarea.value = '';
+        } else if (!title) {
+            vscode.postMessage({ command: 'showError', message: 'Prompt title cannot be empty.' });
         } else if (!text) {
-             vscode.postMessage({ command: 'showError', message: 'Prompt text cannot be empty.' });
+            vscode.postMessage({ command: 'showError', message: 'Prompt text cannot be empty.' });
         }
     });
 

@@ -209,6 +209,13 @@ textarea { /* General textarea styling */
     padding-right: 5px; /* Add some padding if scrollbar appears */
 }
 
+.prompt-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 4px;
+    color: var(--vscode-editor-foreground);
+}
+
 .prompt-actions {
     position: absolute;
     top: 5px;
@@ -327,4 +334,55 @@ textarea { /* General textarea styling */
 #modal-container .prompt-box:focus {
     outline: 2px solid var(--vscode-focusBorder);
     outline-offset: 2px;
+}
+
+/* Modern custom scrollbars */
+#prompts-list-container, .prompt-box, #modal-container, body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-editor-background);
+}
+#prompts-list-container::-webkit-scrollbar, .prompt-box::-webkit-scrollbar, #modal-container::-webkit-scrollbar, body::-webkit-scrollbar {
+    width: 8px;
+    background: var(--vscode-editor-background);
+}
+#prompts-list-container::-webkit-scrollbar-thumb, .prompt-box::-webkit-scrollbar-thumb, #modal-container::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+    background: var(--vscode-scrollbarSlider-background);
+    border-radius: 8px;
+    border: 2px solid var(--vscode-editor-background);
+}
+#prompts-list-container::-webkit-scrollbar-thumb:hover, .prompt-box::-webkit-scrollbar-thumb:hover, #modal-container::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover {
+    background: var(--vscode-scrollbarSlider-hoverBackground);
+}
+
+.prompt-title-edit-input {
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 6px;
+    padding: 4px;
+    border-radius: 3px;
+    border: 1px solid var(--vscode-input-border);
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+}
+.prompt-text-edit-input {
+    width: 100%;
+    min-height: 60px;
+    margin-bottom: 6px;
+    padding: 4px;
+    border-radius: 3px;
+    border: 1px solid var(--vscode-input-border);
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-family: var(--vscode-font-family);
+}
+.prompt-edit-btn-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 4px;
+}
+.prompt-edit-save-btn, .prompt-edit-cancel-btn {
+    margin-right: 0;
+    margin-top: 0;
 }
